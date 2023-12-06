@@ -7,22 +7,36 @@ finding matching text patterns. GNU grep can operate on shell input or file
 input, and is particularly useful for highlighting matching text patterns within
 a large body of text.
 
-fast-grep re-implements the GNU grep tool using Go's built in concurrency to
-make fast-grep faster.
+fast-grep re-implements GNU grep using Go's built in concurrency to make
+fast-grep faster.
 
-## building
+## Building
 
 ```shell
 go build
 ```
 
-## usage
+## Testing
+
+### Run unit tests
+
+```shell
+go test -v ./...
+```
+
+### Run benchmark tests
+
+```shell
+go test -v ./... -bench=. -run=xxx -benchmem
+```
+
+## Usage
 
 ```text
 fast-grep search_pattern file_path [flags]
 ```
 
-## flags
+## Flags
 
 ```text
 --config string   config file (default is $HOME/.fast-grep.yaml)
@@ -31,12 +45,12 @@ fast-grep search_pattern file_path [flags]
 -v, --version         version for fast-grep
 ```
 
-## example
+## Example
 
 ```shell
-./fast-grep et testfile.txt
+./fast-grep et test-file.txt
 ```
 
-### result
+### Result
 
 ![image info](./images/readme_results.png)

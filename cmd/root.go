@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -24,8 +21,6 @@ var rootCmd = &cobra.Command{
 	Long: `fast-grep
 	
 A faster grep tool!`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 2 {
 			fmt.Println("Not enough arguments")
@@ -38,30 +33,31 @@ A faster grep tool!`,
 			return
 		}
 
+		// Open the file
 		filePath := args[1]
-
 		readFile, err := os.Open(filePath)
 		if err != nil {
-			fmt.Printf("error opening file: %v", err)
+			fmt.Printf("error opening file: %v\n", err)
+			os.Exit(1)
 		}
 
+		// Read the file line by line
 		fileScanner := bufio.NewScanner(readFile)
+		defer readFile.Close()
 		fileScanner.Split(bufio.ScanLines)
 		var fileLines []string
-
 		for fileScanner.Scan() {
 			fileLines = append(fileLines, fileScanner.Text())
 		}
 
-		readFile.Close()
-
-		for _, line := range fileLines {
-			matcher := matcher.NewMatcherStruct()
-			match := matcher.Match(args[0], line)
-			if match != "" {
-				fmt.Println(match)
-			}
+		// Search the file for the pattern and print the results
+		searchPattern := args[0]
+		matcher := matcher.NewMatcherStruct()
+		results, counter := matcher.Match(searchPattern, fileLines)
+		for _, result := range results {
+			fmt.Println(result)
 		}
+		fmt.Printf("%d matching lines found\n", counter)
 	},
 }
 
@@ -80,7 +76,6 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.fast-grep.yaml)")
 
 	// Cobra also supports local flags, which will only run
